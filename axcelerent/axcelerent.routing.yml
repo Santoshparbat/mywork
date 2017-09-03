@@ -1,0 +1,7 @@
+axcelerent.content:
+ path: '/page_json/{nid}'
+ defaults:
+  _controller: '\Drupal\axcelerent\Controller\PageJson::content'
+  _title: 'Page Json'
+ requirements:
+  _permission: 'access content'

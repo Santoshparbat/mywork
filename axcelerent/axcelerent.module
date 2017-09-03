@@ -1,0 +1,42 @@
+<?php
+
+use \Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function axcelerent_form_alter(&$form, FormStateInterface $form_state) {
+  if ($form['#form_id'] == 'system_site_information_settings') {
+	$apikey = \Drupal::state()->get('siteapikey');
+    $pagetitle = \Drupal::state()->get('v_page_title');
+	
+    $form['site_api_key'] = [
+      '#type' => 'textfield',
+      '#title' => 'Site API Key',
+      '#default_value' => $apikey?$apikey:'No API Key yet',
+    ];
+	
+    $form['page_name_for_json'] = [
+      '#type' => 'textfield',
+      '#title' => 'Page Name for JSON',
+	  '#description' => 'Input nid of Basic Page content type',
+      '#default_value' => $pagetitle?$pagetitle:'No page Title',
+	  '#suffix' => '<span>Check Json response in given URL format <b>http://your_domain_name/page-json/{pass_nid}</b></span>'
+    ];
+	$form['actions']['submit']['#submit'][] = 'axelerent_assignment_submit';
+	//echo $apikey; exit;
+	if($apikey != ''){
+    $form['actions']['submit']['#value'] = 'Update Configuration';
+	}
+  }  
+}
+
+
+function axelerent_assignment_submit(&$form, FormStateInterface $form_state){
+	$site_info = $form_state->getValues();
+	\Drupal::state()->set('siteapikey', $site_info['site_api_key']);
+	\Drupal::state()->set('v_page_title', $site_info['page_name_for_json']);
+	drupal_set_message($message = 'Site API Key has been saved with '.$site_info["site_api_key"].' successfully', $type = 'status', $repeat = FALSE);
+	//print_r($site_info['site_api_key']); exit;
+	
+}
